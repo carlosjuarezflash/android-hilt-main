@@ -16,10 +16,10 @@
 
 package com.example.android.hilt.navigator
 
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.example.android.hilt.R
 import com.example.android.hilt.ui.ButtonsFragment
-import com.example.android.hilt.ui.LogsFragment
 import javax.inject.Inject
 
 /**
@@ -28,14 +28,14 @@ import javax.inject.Inject
 class AppNavigatorImpl @Inject constructor(private val activity: FragmentActivity) : AppNavigator {
 
     override fun navigateTo(screen: Screens) {
-        val fragment = when (screen) {
-            Screens.BUTTONS -> ButtonsFragment()
-            Screens.LOGS -> LogsFragment()
+        val fragmentClass: Class<out Fragment> = when (screen) {
+            Screens.BUTTONS -> ButtonsFragment::class.java
+            Screens.LOGS -> Class.forName("com.example.android.hilt.ui.LogsFragment") as Class<out Fragment>
         }
 
         activity.supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, fragment)
-            .addToBackStack(fragment::class.java.canonicalName)
+            .replace(R.id.main_container,fragmentClass,null)
+            .addToBackStack(fragmentClass.name)
             .commit()
     }
 }
